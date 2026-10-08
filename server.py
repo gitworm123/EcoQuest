@@ -12,8 +12,8 @@ import webbrowser
 import threading
 import time
 
-PORT = 5000
-HOST = "localhost"
+PORT = int ( os.environ.get("PORT", 5000))
+HOST = "0.0.0.0"
 
 class EcoQuestHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -38,7 +38,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
 
-    server_address = ("", PORT)
+    server_address = (HOST, PORT)
     socketserver.TCPServer.allow_reuse_address = True
 
     try:
@@ -53,7 +53,8 @@ def main():
             print("Press Ctrl+C to terminate the server.\n")
 
             # Launch browser in separate thread
-            threading.Thread(target=open_browser, args=(url,), daemon=True).start()
+            #commented out for trial :-
+            #threading.Thread(target=open_browser, args=(url,), daemon=True).start()
 
             httpd.serve_forever()
     except OSError as e:
