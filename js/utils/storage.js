@@ -297,6 +297,79 @@ window.EcoQuestUtils = window.EcoQuestUtils || {};
     },
 
     /**
+     * Record a completed mini-game, grant XP and check the arcade badge.
+     * XP = score% of the game's XP value, awarded only when it beats the
+     * previous best (replays can't farm XP), plus a one-time completion bonus.
+     */
+    recordGameResult({ gameId, topicId, title, score, maxScore, xpValue }) {
+      const student = this.getCurrentUser();
+      if (!student || student.role !== "student") return null;
+
+      student.gameProgress = student.gameProgress || {};
+      const prev = student.gameProgress[gameId];
+      const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+      const potentialXp = Math.round((xpValue * percent) / 100);
+      const firstCompletion = !prev;
+      const bonus = firstCompletion ? window.EcoQuestData.miniGameRules.firstCompletionBonus : 0;
+      const improvementXp = Math.max(0, potentialXp - (prev ? prev.bestXp : 0));
+      const xpEarned = improvementXp + bonus;
+      const oldLevel = student.level;
+
+      student.gameProgress[gameId] = {
+        topicId,
+        plays: (prev ? prev.plays : 0) + 1,
+        bestScore: Math.max(prev ? prev.bestScore : 0, score),
+        maxScore,
+        bestPercent: Math.max(prev ? prev.bestPercent : 0, percent),
+        bestXp: Math.max(prev ? prev.bestXp : 0, potentialXp),
+        totalXpEarned: (prev ? prev.totalXpEarned : 0) + xpEarned,
+        lastPlayed: new Date().toISOString()
+      };
+
+      student.xp += xpEarned;
+      const lvlInfo = calculateLevelInfo(student.xp);
+      student.level = lvlInfo.level;
+      student.levelTitle = lvlInfo.title;
+      student.prevLevelXp = lvlInfo.prevLevelXp;
+      student.nextLevelXp = lvlInfo.nextLevelXp;
+
+      // Eco Arcade Champion: all 3 mini-games of one topic completed
+      let badgeUnlocked = null;
+      const topicGames = window.EcoQuestData.miniGames.filter(g => g.topicId === topicId);
+      const topicCleared = topicGames.length > 0 && topicGames.every(g => student.gameProgress[g.id]);
+      if (topicCleared && !student.badges.includes("eco-arcade-champion")) {
+        student.badges.push("eco-arcade-champion");
+        badgeUnlocked = window.EcoQuestData.badges.find(b => b.id === "eco-arcade-champion");
+      }
+
+      if (xpEarned > 0) {
+        student.recentActivities.unshift({
+          id: "act-game-" + Date.now(),
+          type: "game",
+          title: `Played mini-game '${title}' (${percent}%)`,
+          xpEarned,
+          timestamp: "Just now",
+          score: `${percent}%`,
+          icon: "gamepad-2"
+        });
+      }
+
+      saveState(currentState);
+
+      return {
+        xpEarned,
+        bonus,
+        improvementXp,
+        firstCompletion,
+        percent,
+        previousBestPercent: prev ? prev.bestPercent : 0,
+        leveledUp: student.level > oldLevel,
+        newLevelTitle: student.levelTitle,
+        badgeUnlocked
+      };
+    },
+
+    /**
      * Reset demo data back to clean initial state
      */
     resetDemoData() {

@@ -28,6 +28,13 @@ class EcoQuestHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         # Clean terminal logging
         sys.stdout.write(f"[{time.strftime('%H:%M:%S')}] {args[0]} {args[1]}\n")
 
+class EcoQuestServer(socketserver.ThreadingTCPServer):
+    # Threaded with a larger backlog: the browser fetches ~35 scripts in parallel,
+    # which overflowed the default single-threaded server (backlog 5) and reset connections.
+    allow_reuse_address = True
+    daemon_threads = True
+    request_queue_size = 128
+
 def open_browser(url):
     time.sleep(1.2)
     print(f"\n🚀 Opening default browser at {url} ...\n")
@@ -39,10 +46,9 @@ def main():
     os.chdir(script_dir)
 
     server_address = (HOST, PORT)
-    socketserver.TCPServer.allow_reuse_address = True
 
     try:
-        with socketserver.TCPServer(server_address, EcoQuestHTTPRequestHandler) as httpd:
+        with EcoQuestServer(server_address, EcoQuestHTTPRequestHandler) as httpd:
             url = f"http://{HOST}:{PORT}"
             print("=" * 70)
             print("🌿 EcoQuest – Gamified Environmental Education Platform")
@@ -62,7 +68,7 @@ def main():
             alt_port = 8080
             print(f"Port {PORT} is busy, attempting alternative port {alt_port}...")
             server_address = ("", alt_port)
-            with socketserver.TCPServer(server_address, EcoQuestHTTPRequestHandler) as httpd:
+            with EcoQuestServer(server_address, EcoQuestHTTPRequestHandler) as httpd:
                 url = f"http://{HOST}:{alt_port}"
                 print(f"Server successfully started at: {url}")
                 threading.Thread(target=open_browser, args=(url,), daemon=True).start()

@@ -8,6 +8,9 @@ window.EcoQuest = window.EcoQuest || {};
     const [appState, setAppState] = useState(() => window.EcoQuestUtils.storage.getState());
     const [currentPage, setCurrentPage] = useState("home");
     const [selectedQuizTopic, setSelectedQuizTopic] = useState(null);
+    const [gamesTopicId, setGamesTopicId] = useState(null);
+    const [gamesViewKey, setGamesViewKey] = useState(0);
+    const [learnTopicId, setLearnTopicId] = useState(null);
     const [authModalOpen, setAuthModalOpen] = useState(false);
     const [toasts, setToasts] = useState([]);
 
@@ -30,7 +33,27 @@ window.EcoQuest = window.EcoQuest || {};
 
     const handleNavigate = (page) => {
       window.EcoQuestUtils.audio.playClick();
+      if (page === "games") {
+        setGamesTopicId(null);
+        setGamesViewKey(k => k + 1);
+      }
+      if (page === "learn") setLearnTopicId(null);
       setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const handleOpenTopicGames = (topicId) => {
+      window.EcoQuestUtils.audio.playClick();
+      setGamesTopicId(topicId);
+      setGamesViewKey(k => k + 1);
+      setCurrentPage("games");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const handleOpenLesson = (topicId) => {
+      window.EcoQuestUtils.audio.playClick();
+      setLearnTopicId(topicId);
+      setCurrentPage("learn");
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
@@ -130,6 +153,28 @@ window.EcoQuest = window.EcoQuest || {};
       }
     };
 
+    const handleGameComplete = (game, reward) => {
+      setAppState({ ...window.EcoQuestUtils.storage.getState() });
+      if (!reward) return;
+      if (reward.xpEarned > 0) {
+        addToast(
+          "Mini-Game XP Awarded! 🎮",
+          `"${game.title}" — you scored ${reward.percent}% and gained +${reward.xpEarned} XP!`,
+          "success"
+        );
+      }
+      if (reward.leveledUp) {
+        addToast("Level Up! 🚀", `You are now a ${reward.newLevelTitle}!`, "badge");
+      }
+      if (reward.badgeUnlocked) {
+        addToast(
+          "New Badge Unlocked! 🏆",
+          `Congratulations! You unlocked the "${reward.badgeUnlocked.name}" badge!`,
+          "badge"
+        );
+      }
+    };
+
     const handleResetDemoData = () => {
       const fresh = window.EcoQuestUtils.storage.resetDemoData();
       setAppState({ ...fresh });
@@ -174,6 +219,20 @@ window.EcoQuest = window.EcoQuest || {};
             <window.EcoQuestComponents.LearnPage
               onNavigate={handleNavigate}
               onStartTopicQuiz={handleStartTopicQuiz}
+              onOpenTopicGames={handleOpenTopicGames}
+              initialTopicId={learnTopicId}
+            />
+          )}
+
+          {currentPage === "games" && (
+            <window.EcoQuestComponents.GamesPage
+              key={gamesViewKey}
+              currentUser={currentUser}
+              initialTopicId={gamesTopicId}
+              onNavigate={handleNavigate}
+              onOpenLesson={handleOpenLesson}
+              onStartTopicQuiz={handleStartTopicQuiz}
+              onGameComplete={handleGameComplete}
             />
           )}
 
@@ -217,6 +276,7 @@ window.EcoQuest = window.EcoQuest || {};
               currentUser={currentUser}
               onNavigate={handleNavigate}
               onStartTopicQuiz={handleStartTopicQuiz}
+              onOpenTopicGames={handleOpenTopicGames}
             />
           )}
 

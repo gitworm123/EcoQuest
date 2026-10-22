@@ -23,6 +23,7 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
       { id: "home", label: "Home", icon: "home" },
       { id: "learn", label: "Learn", icon: "book-open" },
       { id: "quizzes", label: "Quizzes", icon: "help-circle" },
+      { id: "games", label: "Games", icon: "gamepad-2" },
       { id: "missions", label: "Eco Missions", icon: "target" },
       { id: "leaderboard", label: "Leaderboard", icon: "trophy" },
       { id: "badges", label: "Badges", icon: "award" },
@@ -58,7 +59,7 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
             </div>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-1">
+            <nav className="hidden xl:flex items-center space-x-1">
               {navItems.map((item) => {
                 const isActive = currentPage === item.id ||
                   (item.id === "student-dashboard" && currentPage === "student-dashboard") ||
@@ -206,10 +207,10 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
             </div>
 
             {/* Mobile Hamburger Toggle */}
-            <div className="flex lg:hidden items-center gap-2">
+            <div className="flex xl:hidden items-center gap-2">
               <button
                 onClick={onToggleSound}
-                className="p-1.5 rounded-lg text-sm bg-slate-100"
+                className="sm:hidden p-1.5 rounded-lg text-sm bg-slate-100"
               >
                 {soundEnabled ? "🔊" : "🔇"}
               </button>
@@ -225,7 +226,7 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-b border-emerald-100 px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
+          <div className="xl:hidden bg-white border-b border-emerald-100 px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
             <div className="grid grid-cols-2 gap-2 pt-2 pb-3 border-b border-slate-100">
               {navItems.map((item) => (
                 <button

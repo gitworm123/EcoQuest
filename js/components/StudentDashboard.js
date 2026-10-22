@@ -7,7 +7,8 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
   window.EcoQuestComponents.StudentDashboard = function({
     currentUser,
     onNavigate,
-    onStartTopicQuiz
+    onStartTopicQuiz,
+    onOpenTopicGames
   }) {
     if (!currentUser) return null;
 
@@ -30,6 +31,11 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
     const activeMissionsList = allMissions.filter(m =>
       (currentUser.inProgressMissions || []).includes(m.id)
     );
+
+    const miniGames = window.EcoQuestData.miniGames;
+    const gameProgress = currentUser.gameProgress || {};
+    const gamesCompleted = miniGames.filter(g => gameProgress[g.id]).length;
+    const gamesXp = Object.values(gameProgress).reduce((sum, p) => sum + (p.totalXpEarned || 0), 0);
 
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -319,6 +325,50 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
               </div>
             </div>
 
+            {/* Eco Arcade Mini-Game Progress */}
+            <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <h4 className="font-bold text-sm text-slate-900 font-heading">
+                  🎮 Eco Arcade Progress
+                </h4>
+                <button
+                  onClick={() => onNavigate("games")}
+                  className="text-xs font-bold text-emerald-700 hover:underline"
+                >
+                  Play Games →
+                </button>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-slate-700">{gamesCompleted} of {miniGames.length} mini-games completed</span>
+                <span className="font-extrabold text-emerald-700">+{gamesXp} XP</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div
+                  className="h-2.5 rounded-full bg-emerald-500 transition-all duration-500"
+                  style={{ width: `${(gamesCompleted / miniGames.length) * 100}%` }}
+                ></div>
+              </div>
+              <div className="grid grid-cols-7 gap-1.5">
+                {topics.map(t => {
+                  const tGames = miniGames.filter(g => g.topicId === t.id);
+                  const tDone = tGames.filter(g => gameProgress[g.id]).length;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => onOpenTopicGames(t.id)}
+                      title={`${t.title}: ${tDone}/${tGames.length} games completed`}
+                      className={`rounded-xl py-1.5 text-center border text-[10px] font-bold transition-colors ${
+                        tDone === tGames.length ? "bg-emerald-600 border-emerald-600 text-white" : tDone > 0 ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span className="block text-base">{window.EcoQuestData.topicEmoji[t.id]}</span>
+                      {tDone}/{tGames.length}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Active Missions in Progress */}
             <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -369,7 +419,7 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
               <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 text-xs">
                 <div className="flex items-center gap-3">
                   <span className="text-lg">
-                    {act.type === "quiz" ? "🧠" : act.type === "badge" ? "🏆" : "📸"}
+                    {act.type === "quiz" ? "🧠" : act.type === "badge" ? "🏆" : act.type === "game" ? "🎮" : "📸"}
                   </span>
                   <div>
                     <div className="font-bold text-slate-900">{act.title}</div>

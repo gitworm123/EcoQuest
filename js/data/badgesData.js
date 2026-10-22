@@ -127,6 +127,20 @@ window.EcoQuestData.badges = [
     perk: "+10% Permanent XP Bonus on Daily Quizzes",
     gradient: "from-orange-400 to-amber-600",
     bgLight: "bg-orange-50 border-orange-300 text-orange-800"
+  },
+  {
+    id: "eco-arcade-champion",
+    name: "Eco Arcade Champion",
+    emoji: "🎮",
+    icon: "gamepad-2",
+    category: "Mini-Games",
+    rarity: "Rare",
+    xpReward: 150,
+    description: "Mastered an environmental topic through play by clearing all of its interactive mini-games.",
+    requirement: "Complete all 3 mini-games in any one environmental topic.",
+    perk: "Eco Arcade Champion Profile Crest",
+    gradient: "from-lime-400 to-teal-600",
+    bgLight: "bg-lime-50 border-lime-300 text-lime-800"
   }
 ];
 

@@ -49,6 +49,11 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
                   </button>
                 </li>
                 <li>
+                  <button onClick={() => onNavigate("games")} className="hover:text-emerald-400 transition-colors">
+                    Eco Mini-Games
+                  </button>
+                </li>
+                <li>
                   <button onClick={() => onNavigate("missions")} className="hover:text-emerald-400 transition-colors">
                     Real-World Missions
                   </button>

@@ -4,9 +4,9 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
 (function() {
   const { useState } = React;
 
-  window.EcoQuestComponents.LearnPage = function({ onNavigate, onStartTopicQuiz }) {
+  window.EcoQuestComponents.LearnPage = function({ onNavigate, onStartTopicQuiz, onOpenTopicGames, initialTopicId }) {
     const topics = window.EcoQuestData.topics;
-    const [selectedTopic, setSelectedTopic] = useState(null);
+    const [selectedTopic, setSelectedTopic] = useState(() => topics.find(t => t.id === initialTopicId) || null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("all");
 
@@ -31,7 +31,7 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
             Interactive Eco Knowledge Modules
           </h1>
           <p className="text-sm sm:text-base text-slate-600">
-            Explore 7 core environmental domains. Read deep lesson guides, master fundamental concepts, and take quizzes to earn XP.
+            Explore 7 core environmental domains. Read deep lesson guides, master fundamental concepts, play mini-games, and take quizzes to earn XP.
           </p>
         </div>
 
@@ -138,6 +138,13 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
                 >
                   <span>Take Topic Quiz (+XP)</span>
                   <span>⚡</span>
+                </button>
+                <button
+                  onClick={() => onOpenTopicGames(topic.id)}
+                  className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                >
+                  <span>Play 3 Mini-Games</span>
+                  <span>🎮</span>
                 </button>
               </div>
             </div>
@@ -248,6 +255,16 @@ window.EcoQuestComponents = window.EcoQuestComponents || {};
                     className="flex-1 sm:flex-initial px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-800 transition-colors"
                   >
                     View Related Missions
+                  </button>
+                  <button
+                    onClick={() => {
+                      const topicId = selectedTopic.id;
+                      setSelectedTopic(null);
+                      onOpenTopicGames(topicId);
+                    }}
+                    className="flex-1 sm:flex-initial px-5 py-2.5 bg-amber-50 border border-amber-200 hover:bg-amber-100 rounded-xl text-xs font-bold text-amber-900 transition-colors"
+                  >
+                    🎮 Mini-Games
                   </button>
                   <button
                     onClick={() => {

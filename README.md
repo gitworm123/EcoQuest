@@ -67,11 +67,36 @@ Traditional environmental education in schools and colleges is predominantly the
 ### 4. Comprehensive Gamification System
 - **XP / Points Engine:** Earn base XP on quizzes, accuracy bonuses, and high-value mission rewards.
 - **Level Progression:** Ascend from *Level 1: Eco Seedling* to *Level 6: Climate Hero*.
-- **9 Unlockable Badges:** 🌱 Eco Starter, ♻️ Recycling Hero, 💧 Water Saver, 🌳 Tree Guardian, ⚡ Energy Saver, 🌍 Planet Protector, 🔬 Climate Scholar, 🤝 Community Champion, 🔥 Eco Streak Master.
+- **10 Unlockable Badges:** 🌱 Eco Starter, ♻️ Recycling Hero, 💧 Water Saver, 🌳 Tree Guardian, ⚡ Energy Saver, 🌍 Planet Protector, 🔬 Climate Scholar, 🤝 Community Champion, 🔥 Eco Streak Master, 🎮 Eco Arcade Champion.
 - **Visual Celebrations:** Canvas confetti bursts upon leveling up or earning teacher approvals.
 - **Eco Rewards Store:** Redeem XP for official certificates of environmental merit.
 
-### 5. Multi-Tier Eco Leaderboards
+### 5. Eco Arcade: 21 Interactive Mini-Games
+Every environmental topic has **three distinct, playable mini-games** (30 seconds to 2 minutes each). Open them from the **Games** tab, the **Play 3 Mini-Games** button on each Learn card, or the lesson modal.
+
+| Topic | Game 1 | Game 2 | Game 3 |
+|---|---|---|---|
+| Waste Management | Waste Segregation Challenge (drag & drop bins) | Recycling Jigsaw Puzzle (3×3 tile swap) | Reuse or Recycle? (matching board) |
+| Water Conservation | Save the Water (spot the waste, timed) | Water Cycle Jigsaw (diagram puzzle) | Clean the River (cleanup actions, hazardous handling) |
+| Climate Change | Carbon Footprint Challenge (lower or higher?) | Climate Match-Up (memory cards) | Build a Climate-Smart City (budget city builder) |
+| Renewable Energy | Energy Source Matcher (connect pairs) | Build the Solar System (circuit builder) | Power the City (24-hour grid balancing with storage) |
+| Biodiversity | Habitat Matching (drag to habitat) | Food Chain Puzzle (sequence + 10% energy rule) | Save the Habitat (protect/reject decision cards) |
+| Pollution | Pollution Detective (clue hunt, timed) | Clean Air Challenge (AQI simulator) | Pollution Sorting Game (classify + prevent) |
+| Recycling & Sustainable Living | Zero-Waste Day (inventory puzzle) | Eco Shopping Spree (budget strategy) | Decomposition Timeline (timeline placement) |
+
+Each game has instructions, a Start button, score and progress indicators, immediate feedback with an eco-fact, a completion screen with a learning takeaway, Replay, and Back to Games / Back to Topic Lesson. Controls work with mouse (drag & drop), touch (tap an item, then tap a target) and keyboard (Tab/Enter plus number or arrow-key shortcuts).
+
+**Scoring & XP (student roles only):**
+- XP scales with the score percentage (up to +50 per game), plus a **+10 one-time first-completion bonus**.
+- Replays only award the *difference* when you beat your best score, so XP can't be farmed.
+- Completing all 3 games in a topic unlocks the **🎮 Eco Arcade Champion** badge. XP feeds the existing level system, navbar XP pill and Recent Activity, and the Student Dashboard shows an **Eco Arcade Progress** panel.
+- The teacher role plays in practice mode (no XP).
+
+**Persistence limitations:** like the rest of EcoQuest, game progress is stored in the browser's `localStorage` (key `ecoquest_app_state_v1`, per demo persona). It is **not** sent to a server, is not shared between devices or browsers, and is cleared by *Reset Demo Data* or by clearing site data. The Leaderboard page uses static demo data, so game XP does not change leaderboard rankings, and games do not change the quiz-based topic proficiency used by the AI recommendations.
+
+Game code lives in `js/components/games/` (shared shell in `GameKit.js`, one file per topic), the hub in `js/components/GamesPage.js`, and all game content in `js/data/gamesData.js`.
+
+### 6. Multi-Tier Eco Leaderboards
 - Dedicated ranking ladders for:
   - **Individual Students**
   - **Classes** (e.g. B.Tech CSE Year 2, Grade 11-Science)
@@ -80,12 +105,12 @@ Traditional environmental education in schools and colleges is predominantly the
 - Top-3 podium layout with custom gold, silver, and bronze accolades.
 - Timeframe filters: *All Time*, *This Month*, *This Week*.
 
-### 6. Activity Verification Gateway (Teacher Dashboard)
+### 7. Activity Verification Gateway (Teacher Dashboard)
 - Teachers review student submissions with submitted timestamps, student notes, and photo evidence.
 - **1-Click Review Controls:** Approve (+XP & Badges granted) or Reject (with constructive faculty feedback).
 - Automatic state synchronization with student dashboards and campus metrics.
 
-### 7. Environmental Impact Dashboard
+### 8. Environmental Impact Dashboard
 - Aggregates verified collective student outcomes:
   - 🌳 **4,820+** Native Trees Planted
   - ♻️ **14.2+** Tons Waste Recycled
@@ -106,7 +131,7 @@ Traditional environmental education in schools and colleges is predominantly the
 - **Celebration Effects:** Canvas-Confetti
 - **Audio Synthesizer:** Native Web Audio API (zero external audio files required)
 - **State & Storage:** Persistent `localStorage` engine with state management
-- **Local Server:** Python 3.14 standard library (`http.server` & `socketserver`)
+- **Local Server:** Python 3.14 standard library (`http.server` & threaded `socketserver`, so the ~35 scripts load in parallel without dropped connections)
 
 ---
 
@@ -150,6 +175,7 @@ Follow this step-by-step sequence to showcase the entire platform during your CE
    - Switch back to **Aarav Sharma (Student)**.
    - Observe the celebratory notification, XP increase, badge unlock, and updated environmental impact!
 8. **Leaderboard & Badges:** Showcase the Top 3 Podium and click *"View Official Certificate"* on the Badges page.
+9. **Eco Mini-Games:** Open **Games**, pick a topic, play a game (e.g. *Power the City*), and show the completion screen with score, XP and learning takeaway, then the updated XP pill and Dashboard arcade progress.
 
 ---
 
